@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<package>
+  <name>tele_dir</name>
+  <version>0.0.1</version>
+  <description>tele_dir is a tele operation software designed to be configurable to both robot side and human side.</description>
+
+  <!-- One maintainer tag required, multiple allowed, one person per tag --> 
+  <maintainer email="rdelgadovega@gmail.com">Rodrigo Delgado</maintainer>
+  <maintainer email="steff.wich@gmail.com">Steffan Wiche</maintainer>
+
+
+  <!-- One license tag required, multiple allowed, one license per tag -->
+  <license>BSD</license>
+
+
+  <!-- Url tags are optional, but mutiple are allowed, one per tag -->
+  <!-- Optional attribute type can be: website, bugtracker, or repository -->
+  <url type="repository">https://github.com/rdelgadov/tele_dir</url> 
+
+
+  <!-- Author tags are optional, mutiple are allowed, one per tag -->
+  <!-- Authors do not have to be maintianers, but could be -->
+  <author email="rdelgadovega@gmail.com">Rodrigo Delgado</author>
+  <author email="steff.wich@gmail.com">Steffan Wiche</author>
+
+  <!-- The *_depend tags are used to specify dependencies -->
+  <!-- Dependencies can be catkin packages or system dependencies -->
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>rospy</build_depend>
+  <build_depend>std_msgs</build_depend>
+  <run_depend>rospy</run_depend>
+  <run_depend>std_msgs</run_depend>
+
+
+  <!-- The export tag contains other, unspecified, tags -->
+  <export>
+    <!-- Other tools can request additional information be placed here -->
+
+  </export>
+</package>
