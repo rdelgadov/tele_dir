@@ -1,0 +1,29 @@
+<xml>
+    <description>
+        <name/>
+        <target_robot/>
+        <config_version/>
+    </description>
+    <config>
+        <messages>
+            <message id="1">
+                <description/>
+                <type/>
+                <content/>
+            </message>
+        </messages>
+        <topics>
+            <topic id="1">
+                <name />
+                <msg_type/>
+            </topic>
+        </topics>
+        <buttons>
+            <button>
+                <key/>
+                <message/>
+                <topic/>
+            </button>
+        </buttons>
+    </config>
+</xml>
