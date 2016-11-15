@@ -17,7 +17,7 @@
         </messages>
         <topics>
             <topic id="1">
-                <name />
+                <name>asd</name>
                 <msg_type>geometry_msgs/Twist</msg_type>
             </topic>
         </topics>

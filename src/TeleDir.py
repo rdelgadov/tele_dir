@@ -1,17 +1,29 @@
 #!/usr/bin/env python
+# Main tele-dir program.
 
+import RosFunctions
 import rospy
 import roslib.message
-
+import KeyBinding
 import select, sys, tty, termios
 import xml.etree.ElementTree as ET
+import XmlHandler
+
 from geometry_msgs.msg import Twist
 
-import XmlHandler
+
 
 global old_attr
 
 def tele_dir(config):
+    '''
+    :param config:  A valid XML that holds information about what messages to be sent to what
+                    topic when which button is pressed.
+    :return None:
+    This function's purpose is to handle the button inputs as the config parameter states. That is, when a key is
+    pressed this will send the corresponding message to the corresponding topic.
+    '''
+
     tree = ET.parse(config)
     configuration = tree.getroot().find("config")
     buttons = []
@@ -27,11 +39,22 @@ def tele_dir(config):
     for message in configuration.find("messages"):
         messages.append(message)
     for button in buttons:
-        keyboard.setdefault( button.find('key').text,
-                            ( button.find("message").text,
-                              button.find("topic").text ) )
+        message_id = button.find("message").text
+        topic_id = button.find("name").text
+        for message in messages:
+            if message.attrib["id"]==message_id:
+                message_class = message.find('type').text
+                message_content = message.find('content').text
+        for topic in topics:
+            if topic.attrib["id"] == topic_id:
+                topic_name = topic.find("name")
+        real_message_class = roslib.message.get_message_class( message_class )
+        message = eval( "real_message_class()" )
+        RosFunctions.fill_message_args(message, message_content)
+        key = KeyBinding( button.find('key').text, message, topic_name )
+        keyboard.setdefault( button.find('key').text, key )
     rospy.init_node('tele_dir', anonymous=True)
-    rate = rospy.Rate(200)  # 10hz
+    rate = rospy.Rate(200)  # 200hz
     global old_attr
 
     print "Use '+' and '-' to modify linear speed. \n" \
@@ -39,7 +62,7 @@ def tele_dir(config):
           "Press '.' to exit. \n" \
           "Publishing Keystrokes"
     while not rospy.is_shutdown():
-        if select.select([sys.stdin], [], [], 0)[0] == [sys.stdin]:
+        if select.select([sys.stdin], [], [], 0.1)[0] == [sys.stdin]:
             input = sys.stdin.read(1).upper()
             if input == '+':
                 lspeed += 0.5
@@ -101,12 +124,12 @@ if __name__ == '__main__':
 
                 if input.upper()=='C' :
                     termios.tcsetattr(sys.stdin, termios.TCSADRAIN, old_attr)
-                    xmlCreator()
+                    XmlHandler.xmlCreator()
                     tty.setcbreak(sys.stdin.fileno())
                 elif input.upper() == 'L':
                     termios.tcsetattr(sys.stdin, termios.TCSADRAIN, old_attr)
                     xmlLoad = raw_input("Input the filename: ")
-                    XmlHandler.xmlvalidator("Configs/" + xmlLoad)
+                    XmlHandler.xml_validator("Configs/" + xmlLoad)
                     tty.setcbreak(sys.stdin.fileno())
                     tele_dir("Configs/"+xmlLoad)
 
@@ -120,26 +143,4 @@ if __name__ == '__main__':
     except rospy.ROSInterruptException:
         termios.tcsetattr(sys.stdin, termios.TCSADRAIN, old_attr)
 
-
-# vector = rosgraph.names.script_resolve_name('rostopic', "/rosout")
- #       type = "nav_msgs/Odometry"
-#
- #       msg_class = roslib.message.get_message_class(type)
-  #      print len(msg_class.__slots__)
-   #     asd = """
-    #    linear :
-    #         x : 1.0
-     #        y : 1.0
-      #       z : 1.0
-       # angular :
-        #     x : 0.0
-         #    y : 0.0
-          #   z : 1.0
-        #"""
-        #cars = message_converter.convert_ros_message_to_dictionary(eval("msg_class()"))
-        #dumpclean(cars)
-
-        #_fillMessageArgs(msg_class,(yaml.load(asd)))
-
-####
 

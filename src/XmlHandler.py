@@ -2,7 +2,6 @@
 
 import RosFunctions
 import roslib.message
-import sys
 import xml.etree.ElementTree as ET
 import yaml
 
@@ -10,55 +9,51 @@ from rospy_message_converter import message_converter
 
 
 
-def xmlvalidator(xml):
-    tree = None
+def xml_validator(xml):
+    '''
+    :param xml: An XML file.
+    :return Boolean: It's true if the XML file is a valid XML configuration file.
+    :raises ValueError: It raises an exception if the XML file is not a valid configuration file.
+    This function checks that the input XML file is a valid XML configuration file for tele-dir.
+    If the file is not valid, then the program ends and raises an error.
+    '''
+
+    ## We first check if the XML file is a valid XML file.
     try:
         tree =  ET.parse(xml)
     except ET.ParseError:
         print xml+" is not a valid XML file."
-        exit(1)
-    configuration = None
-    description = None
+        return False
 
-    try:
-        if tree.getroot().find("config") == None:
-            raise ValueError("This config file lacks the config tag.")
-        configuration = tree.getroot().find("config")
-    except ValueError as e:
-        print e.message
-        exit(1)
+    ## We then check that it has a configuration section.
+    configuration = tree.getroot().find("config")
+    if configuration == None:
+        print "This config file lacks the config tag."
+        return False
+
     buttonKeyDict = {}
-    buttonIdDict = {}
     idMessagesDict = {}
     idTopicDict= {}
-    buttons = ()
-    messages = ()
-    topics = ()
 
-    try:
-        if configuration.find("buttons") == None:
-            raise ValueError("This config file lacks the buttons tag.")
-        buttons = configuration.find("buttons")
-    except ValueError as e:
-        print e.message
-        exit(1)
-    try:
-        if configuration.find("messages") == None:
-            raise ValueError("This config file lacks the messages tag.")
-        messages=configuration.find("messages")
-    except ValueError as e:
-        print e.message
-        exit(1)
-    try:
-        if configuration.find("topics") == None:
-            raise ValueError("This config file lacks the topics tag.")
-        topics = configuration.find("topics")
-    except ValueError as e:
-        print e.message
-        exit(1)
+    ## We check that there are lists for buttons, messages and topics.
+    buttons = configuration.find("buttons")
+    if buttons == None:
+        print "This config file lacks the buttons tag."
+        return False
+
+    messages = configuration.find("messages")
+    if messages == None:
+        print "This config file lacks the messages tag."
+        return False
+
+    topics = configuration.find("topics")
+    if topics == None:
+        print "This config file lacks the topics tag."
+        return False
 
 
-    #Primero se verifica la integridad de los ID de mensajes y topicos
+
+    ## And procceed to check the integrity of all of them.
     for message in messages:
         try:
             if not idMessagesDict.has_key(message.attrib["id"]):
@@ -67,13 +62,13 @@ def xmlvalidator(xml):
                 raise ValueError('The message id "' + message.attrib["id"] + '" is repeated.')
         except ValueError as e:
             print e.message
-            exit(1)
+            return False
 
         try:
             roslib.message.get_message_class(message.find("type").text)
         except ValueError as e:
             print e.message
-            exit(1)
+            return False
     for topic in topics:
         try:
             if not idTopicDict.has_key(topic.attrib["id"]):
@@ -82,9 +77,10 @@ def xmlvalidator(xml):
                 raise ValueError('The topic id "'+topic.attrib["id"]+'" is repeated.' )
         except ValueError as e:
             print e.message
-            exit(1)
+            return False
 
-    #A continuacion se verifica la integridad de los botones y sus mensajes relacionados y sus topicos.
+    ## We finally check the integrity of the buttons, deciding if the messages sent are compatible
+    ## with the receiving topic.
     for button in buttons:
         try:
             if not buttonKeyDict.has_key(button.find("key").text.upper()):
@@ -93,8 +89,8 @@ def xmlvalidator(xml):
                 raise ValueError('The "'+button.find("key").text.upper()+'" key is repeated.' )
         except ValueError as e:
             print e.message
-            exit(1)
-        #Luego se verifica que el mensaje que se envia con dicho boton sea del tipo que recibe el topico estipulado
+            return False
+        ## This part checks that the message type is compatible with the topic's expectations.
         ismessage=False
         istopic=False
         try:
@@ -110,9 +106,17 @@ def xmlvalidator(xml):
                 raise ValueError('The '+button.find("key").text.upper()+' key\'s associated message type is not compatible with it\'s associated topic.')
         except ValueError as e:
             print e.message
-            exit(1)
+            return False
+    return True
+
 
 def xmlCreator():
+    '''
+    :return None:
+    This function starts a prompt in the terminal for the user to create a custom valid XML configuration file.
+    It asks for several inputs for the user to fill with the information required to make the configuration that
+    the user desires.
+    '''
     master = ET.ElementTree()
     xml = ET.Element("xml")
     master._setroot(xml)
@@ -143,7 +147,8 @@ def xmlCreator():
         topic_msg = raw_input("Input topic msg_type: ")
         while True:
             try:
-                roslib.message.get_message_class(topic_msg)
+                if roslib.message.get_message_class(topic_msg)==None:
+                    raise ValueError()
                 break
             except ValueError as e:
                 topic_msg = raw_input("The message type is invalid."
@@ -178,7 +183,7 @@ def xmlCreator():
         message_class = roslib.message.get_message_class(message_type)
         message_body = message_converter.convert_ros_message_to_dictionary(eval("message_class()"))
         content = ET.Element("content")
-        content.text = yaml.dump(RosFunctions.dumpclean(message_body))
+        content.text = yaml.dump(RosFunctions.message_param_editor(message_body))
         message = ET.Element("message", {'id': str(i)})
         description = ET.Element("description")
         description.text = message_description
