@@ -1,175 +1,57 @@
-<xml>
-	
-	<description>
-		<name></name>
-		<target_robot></target_robot>
-		<version>1.0</version>
-	</description>
-	
-	<config>
-		
-		<buttons>
-			<button>
-				<key>W</key>
-				<message>1</message>
-				<topic>1</topic>
-			</button>
-			<button>
-				<key>A</key>
-				<message>2</message>
-				<topic>1</topic>
-			</button>
-			<button>
-				<key>S</key>
-				<message>3</message>
-				<topic>1</topic>
-			</button>
-			<button>
-				<key>D</key>
-				<message>4</message>
-				<topic>1</topic>
-			</button>
-			<button>
-				<key>Q</key>
-				<message>5</message>
-				<topic>1</topic>
-			</button>
-			<button>
-				<key>E</key>
-				<message>6</message>
-				<topic>1</topic>
-			</button>
-			<button>
-				<key> </key>
-				<message>7</message>
-				<topic>1</topic>
-			</button>
-		</buttons>
-		
-		<messages>
-			<message id="1">
-				<description>Moves forward with speed 1.0</description>
-				<type>geometry_msgs/Twist</type>
-				<content>
-					<linear id="linear">
-						<x>1.0</x>
-						<y>0.0</y>
-						<z>0.0</z>
-					</linear>
-					<angular id="angular">
-						<x>0.0</x>
-						<y>0.0</y>
-						<z>0.0</z>
-					</angular>
-				</content>
-			</message>
-			<message id="2">
-				<description>Turns clockwise with speed 1.0</description>
-				<type>geometry_msgs/Twist</type>
-				<content>
-					<linear id="linear">
-						<x>0.0</x>
-						<y>0.0</y>
-						<z>0.0</z>
-					</linear>
-					<angular id="angular">
-						<x>0.0</x>
-						<y>0.0</y>
-						<z>1.0</z>
-					</angular>
-				</content>
-			</message>
-			<message id="3">
-				<description>Moves backward with speed 1.0</description>
-				<type>geometry_msgs/Twist</type>
-				<content>
-					<linear id="linear">
-						<x>-1.0</x>
-						<y>0.0</y>
-						<z>0.0</z>
-					</linear>
-					<angular id="angular">
-						<x>0.0</x>
-						<y>0.0</y>
-						<z>0.0</z>
-					</angular>
-				</content>
-			</message>
-			<message id="4">
-				<description>Turns counterclockwise with speed 1.0</description>
-				<type>geometry_msgs/Twist</type>
-				<content>
-					<linear id="linear">
-						<x>0.0</x>
-						<y>0.0</y>
-						<z>0.0</z>
-					</linear>
-					<angular id="angular">
-						<x>0.0</x>
-						<y>0.0</y>
-						<z>-1.0</z>
-					</angular>
-				</content>
-			</message>
-			<message id="5">
-				<description>Moves forward turning to the right. Speeds 1.0 and 1.0</description>
-				<type>geometry_msgs/Twist</type>
-				<content>
-					<linear id="linear">
-						<x>1.0</x>
-						<y>0.0</y>
-						<z>0.0</z>
-					</linear>
-					<angular id="angular">
-						<x>0.0</x>
-						<y>0.0</y>
-						<z>1.0</z>
-					</angular>
-				</content>
-			</message>
-			<message id="6">
-				<description>Moves forward turning to the left. Speeds 1.0 and 1.0</description>
-				<type>geometry_msgs/Twist</type>
-				<content>
-					<linear id="linear">
-						<x>1.0</x>
-						<y>0.0</y>
-						<z>0.0</z>
-					</linear>
-					<angular id="angular">
-						<x>0.0</x>
-						<y>0.0</y>
-						<z>-1.0</z>
-					</angular>
-				</content>
-			</message>
-			<message id="7">
-				<description>Stops</description>
-				<type>geometry_msgs/Twist</type>
-				<content>
-					<linear id="linear">
-						<x>0.0</x>
-						<y>0.0</y>
-						<z>0.0</z>
-					</linear>
-					<angular id="angular">
-						<x>0.0</x>
-						<y>0.0</y>
-						<z>0.0</z>
-					</angular>
-				</content>
-			</message>
-		</messages>
-		
-		<topics>
-			<topic id="1">
-				<name>/mobile_base/commands/velocity</name>
-				<msg_type>geometry_msgs/Twist</msg_type>
-			</topic>
-		</topics>
-	
-	
-	</config>
-
-</xml>
-
+<xml><description><name>default_config</name><target_robot>turtlebot</target_robot><config_version>1.0</config_version></description><config><messages><message id="1"><description>Moves forward with speed 1.0</description><type>geometry_msgs/Twist</type><content>angular:
+  x: 0.0
+  y: 0.0
+  z: 0.0
+linear:
+  x: 1.0
+  y: 0.0
+  z: 0.0
+</content></message><message id="2"><description>Turns clockwise with speed 1.0</description><type>geometry_msgs/Twist</type><content>angular:
+  x: 0.0
+  y: 0.0
+  z: 1.0
+linear:
+  x: 0.0
+  y: 0.0
+  z: 0.0
+</content></message><message id="3"><description>Moves backward with speed 1.0</description><type>geometry_msgs/Twist</type><content>angular:
+  x: 0.0
+  y: 0.0
+  z: 0.0
+linear:
+  x: -1.0
+  y: 0.0
+  z: 0.0
+</content></message><message id="4"><description>Turns counterclockwise with speed 1.0</description><type>geometry_msgs/Twist</type><content>angular:
+  x: 0.0
+  y: 0.0
+  z: -1.0
+linear:
+  x: 0.0
+  y: 0.0
+  z: 0.0
+</content></message><message id="5"><description>Moves forward turning to the right. Speeds 1.0 and 1.0</description><type>geometry_msgs/Twist</type><content>angular:
+  x: 0.0
+  y: 0.0
+  z: 1.0
+linear:
+  x: 1.0
+  y: 0.0
+  z: 0.0
+</content></message><message id="6"><description>Moves forward turning to the left. Speeds 1.0 and 1.0</description><type>geometry_msgs/Twist</type><content>angular:
+  x: 0.0
+  y: 0.0
+  z: -1.0
+linear:
+  x: 1.0
+  y: 0.0
+  z: 0.0
+</content></message><message id="7"><description>Stops</description><type>geometry_msgs/Twist</type><content>angular:
+  x: 0.0
+  y: 0.0
+  z: 0.0
+linear:
+  x: 0.0
+  y: 0.0
+  z: 0.0
+</content></message></messages><topics><topic id="1"><name>/mobile_base/commands/velocity</name><msg_type>geometry_msgs/Twist</msg_type></topic></topics><buttons><button><key>W</key><message>1</message><topic>1</topic></button><button><key>A</key><message>2</message><topic>1</topic></button><button><key>S</key><message>3</message><topic>1</topic></button><button><key>D</key><message>4</message><topic>1</topic></button><button><key>Q</key><message>5</message><topic>1</topic></button><button><key>E</key><message>6</message><topic>1</topic></button><button><key> </key><message>7</message><topic>1</topic></button></buttons></config></xml>

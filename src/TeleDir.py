@@ -1,15 +1,17 @@
 #!/usr/bin/env python
 # Main tele-dir program.
+import yaml
+
+from rospy_message_converter import message_converter
 
 import RosFunctions
 import rospy
 import roslib.message
-import KeyBinding
+from KeyBinding import KeyBinding
 import select, sys, tty, termios
 import xml.etree.ElementTree as ET
 import XmlHandler
 
-from geometry_msgs.msg import Twist
 
 
 
@@ -40,27 +42,30 @@ def tele_dir(config):
         messages.append(message)
     for button in buttons:
         message_id = button.find("message").text
-        topic_id = button.find("name").text
+        topic_id = button.find("topic").text
+        topic_name = ''
         for message in messages:
             if message.attrib["id"]==message_id:
                 message_class = message.find('type').text
                 message_content = message.find('content').text
+                message_info = message.find('description').text
         for topic in topics:
             if topic.attrib["id"] == topic_id:
-                topic_name = topic.find("name")
-        real_message_class = roslib.message.get_message_class( message_class )
-        message = eval( "real_message_class()" )
-        RosFunctions.fill_message_args(message, message_content)
-        key = KeyBinding( button.find('key').text, message, topic_name )
+                topic_name = topic.find("name").text
+
+        print yaml.dump(yaml.load(message_content))
+        message = message_converter.convert_dictionary_to_ros_message(message_class,yaml.load(message_content))
+        key = KeyBinding(button.find('key').text, message, topic_name, message_info)
         keyboard.setdefault( button.find('key').text, key )
-    rospy.init_node('tele_dir', anonymous=True)
-    rate = rospy.Rate(200)  # 200hz
+
+    rate = rospy.Rate(60)  # 200hz
     global old_attr
 
     print "Use '+' and '-' to modify linear speed. \n" \
           "Use '*' and '/' to modify angular speed. \n" \
           "Press '.' to exit. \n" \
           "Publishing Keystrokes"
+    last_input=''
     while not rospy.is_shutdown():
         if select.select([sys.stdin], [], [], 0.1)[0] == [sys.stdin]:
             input = sys.stdin.read(1).upper()
@@ -84,18 +89,12 @@ def tele_dir(config):
                 print "Angular speed set to", aspeed
 
             elif keyboard.has_key(input):
-                linear_velocity = messages[int(keyboard.get(input)[0])-1].find("content").find("linear")
-                angular_velocity = messages[int(keyboard.get(input)[0])-1].find("content").find("angular")
-                mess = Twist()
-                mess.linear.x = float(linear_velocity.find("x").text)*lspeed
-                mess.linear.y = float(linear_velocity.find("y").text)*lspeed
-                mess.linear.z = float(linear_velocity.find("z").text)*lspeed
-                mess.angular.x= float(angular_velocity.find("x").text)*aspeed
-                mess.angular.y = float(angular_velocity.find("y").text)*aspeed
-                mess.angular.z = float(angular_velocity.find("z").text)*aspeed
-                pub = rospy.Publisher(topics[int(keyboard.get(input)[1])-1].find("name").text, roslib.message.get_message_class(messages[int(keyboard.get(input)[0])-1].find("type").text), queue_size=10)
-                rospy.init_node('tele_dir', anonymous=True)
-                pub.publish(mess)
+                publish = keyboard.get(input)
+                publish.publish_message()
+                if last_input!=input:
+                    print publish.info
+                    last_input = input
+
                 rate.sleep()
             elif input == '.':
                 break
@@ -108,6 +107,7 @@ def tele_dir(config):
 ## main maneja el menu principal y las funcionalidades a llamar
 if __name__ == '__main__':
     old_attr = termios.tcgetattr(sys.stdin)
+    rospy.init_node('tele_dir', anonymous=True)
     try:
 
         print "Welcome to Tele_Dir ! \n" \
@@ -129,18 +129,20 @@ if __name__ == '__main__':
                 elif input.upper() == 'L':
                     termios.tcsetattr(sys.stdin, termios.TCSADRAIN, old_attr)
                     xmlLoad = raw_input("Input the filename: ")
-                    XmlHandler.xml_validator("Configs/" + xmlLoad)
-                    tty.setcbreak(sys.stdin.fileno())
-                    tele_dir("Configs/"+xmlLoad)
+                    if XmlHandler.xml_validator("Configs/" + xmlLoad + ".xml"):
+                        tty.setcbreak(sys.stdin.fileno())
+                        tele_dir("Configs/"+xmlLoad+".xml")
+                        termios.tcsetattr(sys.stdin, termios.TCSADRAIN, old_attr)
 
                 elif input.upper() == 'D':
                     tele_dir("Configs/default_config.xml")
                 elif input.upper() == 'E':
                     termios.tcsetattr(sys.stdin, termios.TCSADRAIN, old_attr)
                     exit(0)
-                else:
-                    print ">"+input
+                print ">"+input
     except rospy.ROSInterruptException:
+        pass
+    finally:
         termios.tcsetattr(sys.stdin, termios.TCSADRAIN, old_attr)
 
 

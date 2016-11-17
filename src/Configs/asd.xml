@@ -1,0 +1,2 @@
+<xml><description><name>asd</name><target_robot>asd</target_robot><config_version>1.0</config_version></description><config><messages><message id="1"><description>asd</description><type>std_msgs/Empty</type><content>{}
+</content></message></messages><topics><topic id="1"><name>asd</name><msg_type>std_msgs/Empty</msg_type></topic></topics><buttons><button><key>A</key><message>1</message><topic>1</topic></button></buttons></config></xml>

@@ -1,17 +1,18 @@
 <xml>
     <description>
         <name>aasd</name>
-        <target_robot />
+        <target_robot>a</target_robot>
         <config_version>1.0</config_version>
     </description>
     <config>
         <messages>
             <message id="1">
-                <description />
+                <description>asd</description>
                 <type>geometry_msgs/Twist</type>
                 <content>
-                    angular:{x: 1.0, y: 1.0, z: 1.0}
-                    linear: {x: 1.0, y: 1.0, z: 1.0}
+                    angular: {x: 0.0, y: 0.0, z: 1.0}
+                    linear: {x: 1.0, y: 1.0, z: 0.0}
+
                 </content>
             </message>
         </messages>
@@ -22,11 +23,4 @@
             </topic>
         </topics>
         <buttons>
-            <button>
-                <key>A</key>
-                <message>1</message>
-                <topic>1</topic>
-            </button>
-        </buttons>
-    </config>
-</xml>t
+            <button><key>W</key><message>1</message><topic>1</topic></button></buttons></config></xml>

@@ -65,7 +65,12 @@ def xml_validator(xml):
             return False
 
         try:
-            roslib.message.get_message_class(message.find("type").text)
+            if roslib.message.get_message_class(message.find("type").text)==None:
+                raise ValueError('The type message is not a valid type')
+            else:
+                the_message = roslib.message.get_message_class(message.find("type").text)
+                message_object= message_converter.convert_dictionary_to_ros_message(message.find("type").text,yaml.load(message.find("content").text))
+
         except ValueError as e:
             print e.message
             return False
@@ -183,7 +188,7 @@ def xmlCreator():
         message_class = roslib.message.get_message_class(message_type)
         message_body = message_converter.convert_ros_message_to_dictionary(eval("message_class()"))
         content = ET.Element("content")
-        content.text = yaml.dump(RosFunctions.message_param_editor(message_body))
+        content.text = yaml.dump(RosFunctions.message_param_editor(message_body),default_flow_style=False)
         message = ET.Element("message", {'id': str(i)})
         description = ET.Element("description")
         description.text = message_description
