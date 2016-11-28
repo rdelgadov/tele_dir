@@ -4,9 +4,8 @@ import yaml
 
 from rospy_message_converter import message_converter
 
-import RosFunctions
+import AuxFuns
 import rospy
-import roslib.message
 from KeyBinding import KeyBinding
 import select, sys, tty, termios
 import xml.etree.ElementTree as ET
@@ -52,8 +51,6 @@ def tele_dir(config):
         for topic in topics:
             if topic.attrib["id"] == topic_id:
                 topic_name = topic.find("name").text
-
-        print yaml.dump(yaml.load(message_content))
         message = message_converter.convert_dictionary_to_ros_message(message_class,yaml.load(message_content))
         key = KeyBinding(button.find('key').text, message, topic_name, message_info)
         keyboard.setdefault( button.find('key').text, key )
@@ -112,9 +109,10 @@ if __name__ == '__main__':
 
         print "Welcome to Tele_Dir ! \n" \
               "Press C to launch the configuration wizard. \n" \
-              "Press L to load a custom configuration (XML).\n" \
               "Press D to use the default configuration .\n" \
-              "Press E to exit. \n " \
+              "Press L to load a custom configuration (XML).\n" \
+              "Press E to edit a custom configuration (XML). \n" \
+              "Press Q to quit. \n " \
               ">"
         while True:
             tty.setcbreak(sys.stdin.fileno())
@@ -126,6 +124,7 @@ if __name__ == '__main__':
                     termios.tcsetattr(sys.stdin, termios.TCSADRAIN, old_attr)
                     XmlHandler.xmlCreator()
                     tty.setcbreak(sys.stdin.fileno())
+
                 elif input.upper() == 'L':
                     termios.tcsetattr(sys.stdin, termios.TCSADRAIN, old_attr)
                     xmlLoad = raw_input("Input the filename: ")
@@ -134,13 +133,24 @@ if __name__ == '__main__':
                         tele_dir("Configs/"+xmlLoad+".xml")
                         termios.tcsetattr(sys.stdin, termios.TCSADRAIN, old_attr)
 
-                elif input.upper() == 'D':
-                    tele_dir("Configs/default_config.xml")
                 elif input.upper() == 'E':
                     termios.tcsetattr(sys.stdin, termios.TCSADRAIN, old_attr)
+                    xmlLoad = raw_input("Input the filename: ")
+                    XmlHandler.xmlEditor("Configs/" + xmlLoad + ".xml")
+                    tty.setcbreak(sys.stdin.fileno())
+
+                elif input.upper() == 'D':
+                    tele_dir("Configs/default_config.xml")
+
+                elif input.upper() == 'Q':
+                    termios.tcsetattr(sys.stdin, termios.TCSADRAIN, old_attr)
                     exit(0)
+
                 print ">"+input
+
     except rospy.ROSInterruptException:
+        pass
+    except ValueError:
         pass
     finally:
         termios.tcsetattr(sys.stdin, termios.TCSADRAIN, old_attr)

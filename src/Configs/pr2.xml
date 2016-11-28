@@ -1,0 +1,9 @@
+<xml><description><name>pr2</name><target_robot>pr2</target_robot><config_version>1.0</config_version></description><config><messages><message id="1"><description>move forward</description><type>geometry_msgs/Twist</type><content>angular:
+  x: 0.0
+  y: 0.0
+  z: 0.0
+linear:
+  x: 1.0
+  y: 0.0
+  z: 0.0
+</content></message></messages><topics><topic id="1"><name>/base_controller/command</name><msg_type>geometry_msgs/Twist</msg_type></topic></topics><buttons><button><key>W</key><message>1</message><topic>1</topic></button></buttons></config></xml>
