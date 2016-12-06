@@ -299,7 +299,7 @@ def newButton(i, topics, messages):
     button.insert(2, topic)
     return button
 
-def xmlEditor(xml):
+def xmlEditor(xmlUrl, xml):
     '''
     :param xml: A valid tele-dir XML configuration file.
     :return None:
@@ -308,7 +308,7 @@ def xmlEditor(xml):
     #TODO all this shit
 
     try:
-        tree =  ET.parse(xml)
+        tree =  ET.parse(xmlUrl+xml)
     except ET.ParseError:
         print xml+" is not a valid XML file."
         return False
@@ -379,8 +379,8 @@ def xmlEditor(xml):
                                               "      D to delete the message \n"
                                               "      C to continue to the next message.\n", 'E', 'D', 'C').upper()
                         if option == 'E':
-                            message.find("description").text = raw_input("Input message description") or message.find("description").text
-                            type = message_raw_input("Input message type")
+                            message.find("description").text = raw_input("Input message description: ") or message.find("description").text
+                            type = message_raw_input("Input message type: ")
                             if message.find("type").text == type:
                                 message.find("content").text = json.dumps(AuxFuns.message_param_editor(json.loads(message.find("content").text)),sort_keys=True)
                             else:
@@ -456,9 +456,12 @@ def xmlEditor(xml):
                 break
 
     file = raw_input("Enter the new file name: ")
-    file_name = "Configs/" + file + ".xml"
-    tree.write(file_name or xml)
-    print "The file has been saved with name "+ file_name or xml
+    file_name = xmlUrl + file + ".xml"
+    if (file== ""):
+        file_name = xmlUrl + xml
+    tree.write(file_name )
+    print "The file has been saved with name "+ file_name
+
 
 
 

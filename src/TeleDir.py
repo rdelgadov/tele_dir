@@ -151,7 +151,7 @@ if __name__ == '__main__':
                             print(file.split(".")[0])
                     xmlLoad = raw_input("Input the filename: ")
                     try:
-                        XmlHandler.xmlEditor(xml_dir + xmlLoad + ".xml")
+                        XmlHandler.xmlEditor(xml_dir , xmlLoad+".xml")
                     except:
                         print "file "+xmlLoad+ " don't exist."
                     tty.setcbreak(sys.stdin.fileno())
