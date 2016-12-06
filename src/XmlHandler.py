@@ -4,11 +4,103 @@ import AuxFuns
 import roslib.message
 import xml.etree.ElementTree as ET
 import yaml
+import json
 
 from rospy_message_converter import message_converter
 from AuxFuns import our_raw_input
 from AuxFuns import message_raw_input
 
+def validator(tree):
+    configuration = tree.getroot().find("config")
+    if configuration == None:
+        print "This config file lacks the config tag."
+        return False
+
+    buttonKeyDict = {}
+    idMessagesDict = {}
+    idTopicDict = {}
+
+    ## We check that there are lists for buttons, messages and topics.
+    buttons = configuration.find("buttons")
+    if buttons == None:
+        print "This config file lacks the buttons tag."
+        return False
+
+    messages = configuration.find("messages")
+    if messages == None:
+        print "This config file lacks the messages tag."
+        return False
+
+    topics = configuration.find("topics")
+    if topics == None:
+        print "This config file lacks the topics tag."
+        return False
+
+    ## And procceed to check the integrity of all of them.
+    for message in messages:
+        try:
+            if not idMessagesDict.has_key(message.attrib["id"]):
+                idMessagesDict.setdefault(message.attrib["id"], 0)
+            else:
+                raise ValueError('The message id "' + message.attrib["id"] + '" is repeated.')
+        except ValueError as e:
+            print e.message
+            return False
+
+        try:
+            if roslib.message.get_message_class(message.find("type").text) == None:
+                raise ValueError('The type message is not a valid type')
+            else:
+                the_message = roslib.message.get_message_class(message.find("type").text)
+                message_object = message_converter.convert_dictionary_to_ros_message(message.find("type").text,
+                                                                                     json.loads(
+                                                                                         message.find("content").text))
+
+        except ValueError as e:
+            print e.message
+            return False
+    for topic in topics:
+        try:
+            if not idTopicDict.has_key(topic.attrib["id"]):
+                idTopicDict.setdefault(topic.attrib["id"], 0)
+            else:
+                raise ValueError('The topic id "' + topic.attrib["id"] + '" is repeated.')
+        except ValueError as e:
+            print e.message
+            return False
+
+    ## We finally check the integrity of the buttons, deciding if the messages sent are compatible
+    ## with the receiving topic.
+    for button in buttons:
+        try:
+            if not buttonKeyDict.has_key(button.find("key").text.upper()):
+                buttonKeyDict.setdefault(button.find("key").text.upper(), 0)
+            else:
+                raise ValueError('The "' + button.find("key").text.upper() + '" key is repeated.')
+        except ValueError as e:
+            print e.message
+            return False
+        ## This part checks that the message type is compatible with the topic's expectations.
+        ismessage = False
+        istopic = False
+        try:
+            for message in messages:
+                if button.find("message").text == message.attrib["id"]:
+                    ismessage = True
+                    for topic in topics:
+                        if button.find("topic").text == topic.attrib["id"]:
+                            istopic = True
+                            if not topic.find("msg_type").text == message.find("type").text:
+                                raise ValueError(
+                                    'The message ' + message.attrib["id"] + ' is not compatible with the topic ' +
+                                    topic.attrib["id"] + '\'s type.')
+            if not ismessage or not istopic:
+                raise ValueError('The ' + button.find(
+                    "key").text.upper() + ' key\'s associated message type is not compatible with it\'s associated topic.')
+        except ValueError as e:
+            print e.message
+            return False
+    return True
 
 def xml_validator(xml):
     '''
@@ -27,96 +119,10 @@ def xml_validator(xml):
         return False
 
     ## We then check that it has a configuration section.
-    configuration = tree.getroot().find("config")
-    if configuration == None:
-        print "This config file lacks the config tag."
-        return False
-
-    buttonKeyDict = {}
-    idMessagesDict = {}
-    idTopicDict= {}
-
-    ## We check that there are lists for buttons, messages and topics.
-    buttons = configuration.find("buttons")
-    if buttons == None:
-        print "This config file lacks the buttons tag."
-        return False
-
-    messages = configuration.find("messages")
-    if messages == None:
-        print "This config file lacks the messages tag."
-        return False
-
-    topics = configuration.find("topics")
-    if topics == None:
-        print "This config file lacks the topics tag."
-        return False
+    return validator(tree)
 
 
-
-    ## And procceed to check the integrity of all of them.
-    for message in messages:
-        try:
-            if not idMessagesDict.has_key(message.attrib["id"]):
-                idMessagesDict.setdefault(message.attrib["id"], 0)
-            else:
-                raise ValueError('The message id "' + message.attrib["id"] + '" is repeated.')
-        except ValueError as e:
-            print e.message
-            return False
-
-        try:
-            if roslib.message.get_message_class(message.find("type").text)==None:
-                raise ValueError('The type message is not a valid type')
-            else:
-                the_message = roslib.message.get_message_class(message.find("type").text)
-                message_object= message_converter.convert_dictionary_to_ros_message(message.find("type").text,yaml.load(message.find("content").text))
-
-        except ValueError as e:
-            print e.message
-            return False
-    for topic in topics:
-        try:
-            if not idTopicDict.has_key(topic.attrib["id"]):
-                idTopicDict.setdefault(topic.attrib["id"], 0)
-            else:
-                raise ValueError('The topic id "'+topic.attrib["id"]+'" is repeated.' )
-        except ValueError as e:
-            print e.message
-            return False
-
-    ## We finally check the integrity of the buttons, deciding if the messages sent are compatible
-    ## with the receiving topic.
-    for button in buttons:
-        try:
-            if not buttonKeyDict.has_key(button.find("key").text.upper()):
-                buttonKeyDict.setdefault(button.find("key").text.upper(), 0)
-            else:
-                raise ValueError('The "'+button.find("key").text.upper()+'" key is repeated.' )
-        except ValueError as e:
-            print e.message
-            return False
-        ## This part checks that the message type is compatible with the topic's expectations.
-        ismessage=False
-        istopic=False
-        try:
-            for message in messages:
-                if button.find("message").text == message.attrib["id"]:
-                    ismessage = True
-                    for topic in topics:
-                        if button.find("topic").text == topic.attrib["id"]:
-                            istopic = True
-                            if not topic.find("msg_type").text==message.find("type").text:
-                                raise ValueError('The message '+message.attrib["id"]+' is not compatible with the topic '+topic.attrib["id"]+'\'s type.')
-            if not ismessage or not istopic:
-                raise ValueError('The '+button.find("key").text.upper()+' key\'s associated message type is not compatible with it\'s associated topic.')
-        except ValueError as e:
-            print e.message
-            return False
-    return True
-
-
-def xmlCreator():
+def xmlCreator(xml_dir):
     '''
     :return None:
     This function starts a prompt in the terminal for the user to create a custom valid XML configuration file.
@@ -167,7 +173,7 @@ def xmlCreator():
     i = 1
     print "Initializing keyboard configuration. "
     while True:
-        
+
         button = newButton(i, topics, messages)
         buttons.insert(i - 1, button)
         i += 1
@@ -178,7 +184,7 @@ def xmlCreator():
     config.insert(2, topics)
     config.insert(3, buttons)
     xml.insert(1, config)
-    master.write("Configs/" + file_name + ".xml")
+    master.write(xml_dir + file_name + ".xml")
     print "File Created with name :" + file_name + ".xml!"
 
 
@@ -195,6 +201,8 @@ def delete_key_by_topic(topic, buttons):
         print ".\n"
     else :
         print "No key has been deleted due to topic removal."
+    return list
+
 
 def delete_key_by_message(message, buttons):
     list = []
@@ -209,13 +217,21 @@ def delete_key_by_message(message, buttons):
         print ".\n"
     else:
         print "No key has been deleted due to message removal."
+    return list
+
+
 def newMessage(i):
     message_description = raw_input("Input message description: ")
     message_type = message_raw_input("Input message type: ")
     message_class = roslib.message.get_message_class(message_type)
     message_body = message_converter.convert_ros_message_to_dictionary(eval("message_class()"))
+    message_content = json.dumps(AuxFuns.message_param_editor(message_body), sort_keys=True)
+    return createMessage(i, message_description, message_type, message_content)
+
+
+def createMessage(i, message_description, message_type, message_content):
     content = ET.Element("content")
-    content.text = yaml.dump(AuxFuns.message_param_editor(message_body), default_flow_style=False)
+    content.text = message_content
     message = ET.Element("message", {'id': str(i)})
     description = ET.Element("description")
     description.text = message_description
@@ -229,6 +245,9 @@ def newMessage(i):
 def newTopic(i):
     topic_name = raw_input("Input topic name: ")
     topic_msg = message_raw_input("Input topic msg_type: ")
+    return createTopic(i, topic_name, topic_msg)
+
+def createTopic(i, topic_name, topic_msg):
     topic = ET.Element("topic", {'id': str(i)})
     name = ET.Element("name")
     name.text = topic_name
@@ -363,11 +382,11 @@ def xmlEditor(xml):
                             message.find("description").text = raw_input("Input message description") or message.find("description").text
                             type = message_raw_input("Input message type")
                             if message.find("type").text == type:
-                                message.find("content").text = yaml.dump(AuxFuns.message_param_editor(yaml.load(message.find("content").text)), default_flow_style=False)
+                                message.find("content").text = json.dumps(AuxFuns.message_param_editor(json.loads(message.find("content").text)),sort_keys=True)
                             else:
                                 message_class = roslib.message.get_message_class(type)
                                 message_body = message_converter.convert_ros_message_to_dictionary(eval("message_class()"))
-                                message.find("content").text = yaml.dump(AuxFuns.message_param_editor(message_body), default_flow_style=False)
+                                message.find("content").text = json.dumps(AuxFuns.message_param_editor(message_body),sort_keys=True)
                         elif option == 'D':
                             if our_raw_input("Are you sure? (Y/N)", 'Y', 'N').upper() == 'Y':
                                 delete_key_by_message(message, buttons)

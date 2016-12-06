@@ -22,6 +22,12 @@ class KeyBinding:
         self.message = message
         self.subscribed_topic = subscribed_topic
         self.info = info
+    def get_info(self):
+        '''
+
+        :return:
+        '''
+        return self.info
 
     def get_key(self):
         '''
