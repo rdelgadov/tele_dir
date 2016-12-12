@@ -39,7 +39,7 @@ def validator(tree):
     ## And procceed to check the integrity of all of them.
     for message in messages:
         try:
-            if not idMessagesDict.has_key(message.attrib["id"]):
+            if not message.attrib["id"] in idMessagesDict:
                 idMessagesDict.setdefault(message.attrib["id"], 0)
             else:
                 raise ValueError('The message id "' + message.attrib["id"] + '" is repeated.')
@@ -61,7 +61,7 @@ def validator(tree):
             return False
     for topic in topics:
         try:
-            if not idTopicDict.has_key(topic.attrib["id"]):
+            if not topic.attrib["id"] in idTopicDict:
                 idTopicDict.setdefault(topic.attrib["id"], 0)
             else:
                 raise ValueError('The topic id "' + topic.attrib["id"] + '" is repeated.')
@@ -73,7 +73,7 @@ def validator(tree):
     ## with the receiving topic.
     for button in buttons:
         try:
-            if not buttonKeyDict.has_key(button.find("key").text.upper()):
+            if not button.find("key").text.upper() in buttonKeyDict:
                 buttonKeyDict.setdefault(button.find("key").text.upper(), 0)
             else:
                 raise ValueError('The "' + button.find("key").text.upper() + '" key is repeated.')

@@ -88,7 +88,7 @@ def tele_dir(config):
             #         aspeed = 0.0
             #     print "Angular speed set to", aspeed
 
-            if keyboard.has_key(input):
+            if input in keyboard:
                 publish = keyboard.get(input)
                 publish.publish_message()
                 if last_input!=input:
