@@ -24,4 +24,4 @@ A lot of prompts allow for an exit writing "quit".
 
 ## Installation
 
-Working!
+work in progress!
