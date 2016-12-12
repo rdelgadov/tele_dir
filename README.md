@@ -14,13 +14,13 @@ The tele_dir package for ROS is a tool that allows for heavily customizable cont
 
 Tele_dir is a console based program. It prompts for different inputs to comply with it's well-explained functions. The prompts start as soon as it is launched, asking if you wish to access the configuration wizard, the editor, or to launch the control support using the default configuration or a custom one.
 
-[mainMenu](https://github.com/rdelgadov/pomodorest/blob/gh-pages/assets/tele_dir_image/mainMenu.jpg)
+![mainMenu](https://github.com/rdelgadov/pomodorest/blob/gh-pages/assets/tele_dir_image/mainMenu.jpg)
 
 The wizard will ask for the different topics and messages that will compose the key scheme, and will finally ask for keys to map to both the messages and topics previously input. The editor works similarly, but allowing you to edit stuff that was already there.
 
 A lot of prompts allow for an exit writing "quit". 
 
-[Wizard](https://github.com/rdelgadov/pomodorest/blob/gh-pages/assets/tele_dir_image/wizard.jpg)
+![Wizard](https://github.com/rdelgadov/pomodorest/blob/gh-pages/assets/tele_dir_image/wizard.jpg)
 
 ## Installation
 
