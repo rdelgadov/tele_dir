@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
   <name>tele_dir</name>
-  <version>0.0.1</version>
+  <version>0.0.2</version>
   <description>tele_dir is a tele operation software designed to be configurable to both robot side and human side.</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag --> 
