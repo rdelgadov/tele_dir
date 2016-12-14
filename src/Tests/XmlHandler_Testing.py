@@ -2,12 +2,15 @@ import os, sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 # Import modification to allow the import of XMLHandler
 ## TODO: refactor test names to fit convention
+import rospkg
 import unittest
 import xml.etree.ElementTree as ET
 import XmlHandler as xml
 
+
 class XmlHandler_Testing(unittest.TestCase):
     def setUp(self):
+        self.xml_dir = rospkg.RosPack().get_path('tele_dir') + "/src/Configs/"
         self.topic = ET.Element("topic", {'id': '1'} )
         name = ET.Element("name")
         msg_type = ET.Element("msg_type")
@@ -71,7 +74,7 @@ class XmlHandler_Testing(unittest.TestCase):
         tree = ET.ElementTree()
         file = ET.Element("xml")
         tree._setroot(file)
-        self.assertEquals(True ,xml.xml_validator("../Configs/asdf.xml"))
+        self.assertEquals(True ,xml.xml_validator(self.xml_dir + "default_config.xml"))
         self.assertEqual(False, xml.validator(tree))
 
 

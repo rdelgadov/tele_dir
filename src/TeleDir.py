@@ -18,7 +18,7 @@ import json
 
 global old_attr
 
-def tele_dir(config):
+def tele_dir( config ):
     '''
     :param config:  A valid XML that holds information about what messages to be sent to what
                     topic when which button is pressed.
