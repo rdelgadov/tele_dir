@@ -2,6 +2,17 @@
 Changelog for package tele_dir
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Change package description
+* Merge branch 'master' of https://github.com/rdelgadov/tele_dir
+* Delete some prints
+* Merge pull request `#1 <https://github.com/rdelgadov/tele_dir/issues/1>`_ from rdelgadov/rdelgadov-patch-1
+  Update package.xml
+* Update package.xml
+* resolve test problems with the path of the configs files
+* Contributors: Rodrigo Alexis Delgado Vega, rdelgadov
+
 0.0.2 (2016-12-12)
 ------------------
 * modify drone_config
