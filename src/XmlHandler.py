@@ -315,7 +315,7 @@ def xmlEditor(xmlUrl, xml):
 
 
     edited = False
-    print "Welcome to the tele-dir configuration editor. You are our user 1.000.000 ! You have won a prize :) ask Johan Fabry for it."
+    print "Welcome to the tele-dir configuration editor."
     descr_edit = our_raw_input("Do you wish to edit the description? (Y/N)", 'Y', 'N')
     if descr_edit.upper() == 'Y':
         description = tree.getroot().find("description")
