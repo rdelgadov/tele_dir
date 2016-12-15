@@ -2,8 +2,8 @@
 Changelog for package tele_dir
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.0.3 (2016-12-15)
+------------------
 * Change package description
 * Merge branch 'master' of https://github.com/rdelgadov/tele_dir
 * Delete some prints
