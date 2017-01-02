@@ -14,6 +14,6 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 catkin_install_python(
-   PROGRAMS src/TeleDir.py
+   PROGRAMS src/
    DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
