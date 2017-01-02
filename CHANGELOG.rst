@@ -2,8 +2,8 @@
 Changelog for package tele_dir
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.0.4 (2017-01-02)
+------------------
 * Create setup.py
 * Update CMakeLists.txt
 * Update CMakeLists.txt
