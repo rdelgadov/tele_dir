@@ -4,7 +4,7 @@ project(tele_dir)
 find_package(catkin REQUIRED COMPONENTS
   rospy
   std_msgs
-  rospy_message_convert
+  rospy_message_converter
 )
 
 
