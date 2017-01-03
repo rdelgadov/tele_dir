@@ -4,7 +4,6 @@ project(tele_dir)
 find_package(catkin REQUIRED COMPONENTS
   rospy
   std_msgs
-  rospy_message_converter
 )
 
 
@@ -14,4 +13,7 @@ catkin_package(
 include_directories(
   ${catkin_INCLUDE_DIRS}
 )
-catkin_python_setup()
+catkin_install_python(
+   PROGRAMS src/TeleDir.py
+   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
