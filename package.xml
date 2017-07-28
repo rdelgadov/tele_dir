@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
   <name>tele_dir</name>
-  <version>0.0.4</version>
+  <version>0.0.5</version>
   <description> tele_dir is a robust teleoperations software. It's design allows for ample configuration in order to fit to many robots, and to any user. </description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag --> 

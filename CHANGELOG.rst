@@ -2,8 +2,8 @@
 Changelog for package tele_dir
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.0.5 (2017-07-28)
+------------------
 * Delete setup.py
 * Rebase cmake because have errors
   begin new branch to resolved
