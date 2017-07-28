@@ -2,6 +2,13 @@
 Changelog for package tele_dir
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Delete setup.py
+* Rebase cmake because have errors
+  begin new branch to resolved
+* Contributors: Rodrigo Alexis Delgado Vega
+
 0.0.4 (2017-01-02)
 ------------------
 * Create setup.py
